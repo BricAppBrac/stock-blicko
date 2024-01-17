@@ -101,9 +101,16 @@ body {
     }
   }
 
-  .source-type {
+  .mat-type {
     h3 {
       color: $verylightblue;
+      letter-spacing: 1.5px;
+    }
+  }
+
+  .source-type {
+    h3 {
+      color: $blue;
       letter-spacing: 1.5px;
     }
   }
