@@ -36,14 +36,25 @@
 
   .home-content {
     margin: 5px auto;
+    display: flex;
+    justify-content: center;
+
+    @media screen and (max-width: 435px) {
+      margin: 0 auto;
+      align-items: center;
+    }
 
     .upload-content {
+      align-items: center;
       .upload-head {
         display: flex;
         flex-direction: column;
+
+        margin: 0 2px;
         background: $verylightblue;
         border-radius: 20px;
-        width: fit-content;
+        // width: fit-content;
+        align-items: center;
       }
 
       .source-type,
@@ -54,7 +65,7 @@
         }
 
         #nomFichierMAJ {
-          width: 100%;
+          width: 95%;
         }
       }
 

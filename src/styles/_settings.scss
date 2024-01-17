@@ -98,6 +98,10 @@ body {
   .upload-head {
     h3 {
       margin: 5px 10px;
+
+      @media screen and (max-width: 435px) {
+        margin: 0 auto;
+      }
     }
   }
 

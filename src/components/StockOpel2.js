@@ -73,6 +73,7 @@ const StockOpel2 = ({
     setSelectedMatOpel2("");
     setOpel2Mat(null);
     setSelectedRowIndexOpel2(null);
+    setSearchTermOpel2("");
   };
 
   // Prise en compte de la saisie
@@ -120,6 +121,7 @@ const StockOpel2 = ({
                   id="searchInputOpel2"
                   type="text"
                   placeholder="Recherche"
+                  value={searchTermOpel2 || ""}
                   onChange={(e) => setSearchTermOpel2(e.target.value)}
                 />
               </div>

@@ -73,6 +73,7 @@ const StockPartner = ({
     setSelectedMatPartner("");
     setPartnerMat(null);
     setSelectedRowIndexPartner(null);
+    setSearchTermPartner("");
   };
 
   // Prise en compte de la saisie
@@ -120,6 +121,7 @@ const StockPartner = ({
                   id="searchInputPartner"
                   type="text"
                   placeholder="Recherche"
+                  value={searchTermPartner || ""}
                   onChange={(e) => setSearchTermPartner(e.target.value)}
                 />
               </div>

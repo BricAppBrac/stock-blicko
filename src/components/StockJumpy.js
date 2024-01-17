@@ -73,6 +73,7 @@ const StockJumpy = ({
     setSelectedMatJumpy("");
     setJumpyMat(null);
     setSelectedRowIndexJumpy(null);
+    setSearchTermJumpy("");
   };
 
   // Prise en compte de la saisie
@@ -120,6 +121,7 @@ const StockJumpy = ({
                   id="searchInputJumpy"
                   type="text"
                   placeholder="Recherche"
+                  value={searchTermJumpy || ""}
                   onChange={(e) => setSearchTermJumpy(e.target.value)}
                 />
               </div>

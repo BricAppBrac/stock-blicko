@@ -73,6 +73,7 @@ const StockChavril = ({
     setSelectedMatChavril("");
     setChavrilMat(null);
     setSelectedRowIndexChavril(null);
+    setSearchTermChavril("");
   };
 
   // Prise en compte de la saisie
@@ -122,6 +123,7 @@ const StockChavril = ({
                   id="searchInputChavril"
                   type="text"
                   placeholder="Recherche"
+                  value={searchTermChavril || ""}
                   onChange={(e) => setSearchTermChavril(e.target.value)}
                 />
               </div>
