@@ -132,7 +132,7 @@ const StockPartner = ({
                     <input
                       id="selectedMatPartner"
                       type="text"
-                      value={tempValuePartner}
+                      value={tempValuePartner || 0}
                       onChange={(e) => handleInputChange(e.target.value)}
                     />{" "}
                     <button type="submit">Mettre à jour</button>

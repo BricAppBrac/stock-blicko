@@ -132,7 +132,7 @@ const StockJumpy = ({
                     <input
                       id="selectedMatJumpy"
                       type="text"
-                      value={tempValueJumpy}
+                      value={tempValueJumpy || 0}
                       onChange={(e) => handleInputChange(e.target.value)}
                     />{" "}
                     <button type="submit">Mettre à jour</button>

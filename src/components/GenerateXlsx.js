@@ -16,8 +16,8 @@ const GenerateXlsx = ({
   let totauxArrayPartner = null;
 
   const enteteChavril = [
+    "",
     "Chavril",
-    "Libellé",
     "Quantité M",
     "Quantité M-1",
     "Prix Unitaire €",
@@ -25,8 +25,8 @@ const GenerateXlsx = ({
     "Fournisseur",
   ];
   const enteteOpel1 = [
+    "",
     "Opel1",
-    "Libellé",
     "Quantité M",
     "Quantité M-1",
     "Prix Unitaire €",
@@ -34,8 +34,8 @@ const GenerateXlsx = ({
     "Fournisseur",
   ];
   const enteteOpel2 = [
+    "",
     "Opel2",
-    "Libellé",
     "Quantité M",
     "Quantité M-1",
     "Prix Unitaire €",
@@ -43,8 +43,8 @@ const GenerateXlsx = ({
     "Fournisseur",
   ];
   const enteteJumpy = [
+    "",
     "Jumpy",
-    "Libellé",
     "Quantité M",
     "Quantité M-1",
     "Prix Unitaire €",
@@ -52,8 +52,8 @@ const GenerateXlsx = ({
     "Fournisseur",
   ];
   const entetePartner = [
+    "",
     "Partner",
-    "Libellé",
     "Quantité M",
     "Quantité M-1",
     "Prix Unitaire €",
@@ -183,6 +183,18 @@ const GenerateXlsx = ({
 
     // Conversion de finalArray en feuille de calcul
     const worksheet = XLSX.utils.aoa_to_sheet(finalArray);
+
+    // Parcourir toutes les cellules du worksheet et ajuster le format pour les cellules numériques
+    for (let cell in worksheet) {
+      // vérifier si c'est une cellule (et non une propriété de l'objet worksheet)
+      if (cell[0] === "!") continue;
+
+      // Définir le type et le format de cellule pour les nombres
+      if (typeof worksheet[cell].v === "number") {
+        worksheet[cell].t = "n"; // Définir le type de cellule sur 'n' (nombre)
+        worksheet[cell].z = XLSX.SSF.get_table()[0]; // Appliquer le format de nombre standard
+      }
+    }
 
     // Création d'un nouveau classeur et ajout de la feuille de calcul
     const workbook = XLSX.utils.book_new();

@@ -132,7 +132,7 @@ const StockOpel2 = ({
                     <input
                       id="selectedMatOpel2"
                       type="text"
-                      value={tempValueOpel2}
+                      value={tempValueOpel2 || 0}
                       onChange={(e) => handleInputChange(e.target.value)}
                     />{" "}
                     <button type="submit">Mettre à jour</button>

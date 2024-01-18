@@ -79,14 +79,16 @@ const StockChavril = ({
   // Prise en compte de la saisie
   const handleNbChange = (updatedValue) => {
     console.log("handleNbChange");
+    // Convertir la valeur mise à jour en nombre
+    const numericValue = parseFloat(updatedValue) || 0;
     // Mettez à jour array2 avec le nouveau stock (index2) et avec le nouveau montant (index 5 = index 2 * index 4)
     let updatedArray;
 
     updatedArray = [...chavrilArray2];
     if (updatedArray[selectedRowIndexChavril]) {
-      updatedArray[selectedRowIndexChavril][2] = updatedValue;
+      updatedArray[selectedRowIndexChavril][2] = numericValue;
       updatedArray[selectedRowIndexChavril][5] =
-        updatedValue * updatedArray[selectedRowIndexChavril][4];
+        numericValue * updatedArray[selectedRowIndexChavril][4];
       setChavrilArray2(updatedArray);
     }
   };
@@ -134,7 +136,7 @@ const StockChavril = ({
                     <input
                       id="selectedMatChavril"
                       type="text"
-                      value={tempValueChavril}
+                      value={tempValueChavril || 0}
                       onChange={(e) => handleInputChange(e.target.value)}
                     />{" "}
                     <button type="submit">Mettre à jour</button>

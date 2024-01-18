@@ -57,6 +57,9 @@ const UploadSource = () => {
       const sheet = workbook.Sheets[sheetName];
       const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
+      console.log("jsonData");
+      console.log(jsonData);
+
       let currentArray = null;
       const chavrilArray = [],
         opel1Array = [],
@@ -129,7 +132,7 @@ const UploadSource = () => {
     setIsFileNameCibleValidated(true);
   };
 
-  // Initialisation des tableaux à MAJ à partir des tableaux source
+  // Initialisation des tableaux à MAJ à partir des tableaux source (seulement dans le cas Création)
   const handleArray2Init = () => {
     ///////// CHAVRIL ////////////
 
@@ -243,8 +246,9 @@ const UploadSource = () => {
   useEffect(() => {
     // Cette fonction sera appelée chaque fois que chavrilArray (ou tout autre état mentionné) est mis à jour.
     // Initialisation des tableaux à MAJ
-
-    handleArray2Init();
+    if (sourceType === "Creation") {
+      handleArray2Init();
+    }
     // eslint-disable-next-line
   }, [chavrilArray, opel1Array, opel2Array, jumpyArray, partnerArray]);
 
