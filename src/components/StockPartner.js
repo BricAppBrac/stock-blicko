@@ -1,11 +1,6 @@
 import { useState } from "react";
 
-const StockPartner = ({
-  partnerArray2,
-  setPartnerArray2,
-  partnerArray,
-  sourceName,
-}) => {
+const StockPartner = ({ partnerArray2, setPartnerArray2, sourceName }) => {
   const [searchTermPartner, setSearchTermPartner] = useState("");
   const [partnerMat, setPartnerMat] = useState(null);
 
@@ -15,6 +10,9 @@ const StockPartner = ({
   const [tempValuePartner, setTempValuePartner] = useState("");
 
   const [selectedMatPartner, setSelectedMatPartner] = useState("");
+
+  const [showMessage, setShowMessage] = useState(false);
+  const [showMessageAjout, setShowMessageAjout] = useState(false);
 
   let array = partnerArray2;
 
@@ -48,16 +46,47 @@ const StockPartner = ({
   const handleSelectMat = (selectedValue) => {
     console.log("handleSelectMat");
 
-    setPartnerMat(selectedValue);
-    setSelectedMatPartner(selectedValue);
-    rowIndexW = array.findIndex((row) => row[1] === selectedValue);
-    setSelectedRowIndexPartner(rowIndexW);
-    if (rowIndexW >= 0 && array[rowIndexW] && array[rowIndexW].length > 2) {
-      setTempValuePartner(array[rowIndexW][2]); // Mettre à jour tempValue avec la valeur de l'index 2
+    // Si l'utilisateur sélectionne "Ajouter un nouveau matériel"
+    if (selectedValue === "nouveau") {
+      const newMaterial = prompt("Entrez le nom du nouveau matériel :");
+      const newQuantity = prompt("Entrez la quantité du nouveau matériel :");
+      const newPrice = prompt("Entrez le prix en € du nouveau matériel :");
+      const newFournisseur = prompt(
+        "Entrez le fournisseur du nouveau matériel :"
+      );
+      if (newMaterial) {
+        const newRow = [
+          "",
+          newMaterial,
+          parseFloat(newQuantity) || 0,
+          0,
+          parseFloat(newPrice) || 0,
+          // (parseFloat(newQuantity) || 0) * (parseFloat(newPrice) || 0),
+          "calcul montant par excel",
+          newFournisseur || "",
+        ];
+        setPartnerArray2([...partnerArray2, newRow]);
+        setPartnerMat(newMaterial);
+        // setSelectedMatPartner(newMaterial);
+        setTempValuePartner(newQuantity);
+        ///////////////////////////////
+        setShowMessageAjout(true);
+        setTimeout(() => {
+          setShowMessageAjout(false);
+        }, 5000); // 5000 ms = 5 secondes
+      }
     } else {
-      setTempValuePartner(""); // Réinitialiser si l'élément sélectionné n'est pas valide
+      setPartnerMat(selectedValue);
+      setSelectedMatPartner(selectedValue);
+      rowIndexW = array.findIndex((row) => row[1] === selectedValue);
+      setSelectedRowIndexPartner(rowIndexW);
+      if (rowIndexW >= 0 && array[rowIndexW] && array[rowIndexW].length > 2) {
+        setTempValuePartner(array[rowIndexW][2]); // Mettre à jour tempValue avec la valeur de l'index 2
+      } else {
+        setTempValuePartner(""); // Réinitialiser si l'élément sélectionné n'est pas valide
+      }
+      rowIndexW = null;
     }
-    rowIndexW = null;
   };
 
   // Stockage du stock saisi
@@ -69,6 +98,10 @@ const StockPartner = ({
     e.preventDefault(); // Empêcher le rechargement de la page
 
     handleNbChange(tempValuePartner);
+    setShowMessage(true);
+    setTimeout(() => {
+      setShowMessage(false);
+    }, 5000); // 5000 ms = 5 secondes
     setTempValuePartner(""); // Réinitialiser la valeur temporaire
     setSelectedMatPartner("");
     setPartnerMat(null);
@@ -79,12 +112,15 @@ const StockPartner = ({
   // Prise en compte de la saisie
   const handleNbChange = (updatedValue) => {
     console.log("handleNbChange");
-    // Mettez à jour array2 avec la nouvelle valeur
+    // Convertir la valeur mise à jour en nombre
+    const numericValue = parseFloat(updatedValue) || 0;
+    // Mettez à jour array2 avec le nouveau stock (index2)
     let updatedArray;
 
     updatedArray = [...partnerArray2];
     if (updatedArray[selectedRowIndexPartner]) {
-      updatedArray[selectedRowIndexPartner][2] = updatedValue;
+      updatedArray[selectedRowIndexPartner][2] = numericValue;
+      updatedArray[selectedRowIndexPartner][5] = "calcul montant par excel";
       setPartnerArray2(updatedArray);
     }
   };
@@ -96,20 +132,21 @@ const StockPartner = ({
         <h3>PARTNER</h3>
         <h3>
           {/* Si le tableau est chargé */}
-          {partnerArray.length > 0 ? (
+          {partnerArray2.length > 0 ? (
             <div className="choixMat">
               <select
                 onChange={(e) => handleSelectMat(e.target.value)}
                 value={selectedMatPartner}
               >
                 <option value="">Choisissez le matériel</option>
+                <option value="nouveau">Ajouter un nouveau matériel</option>
                 {searchTermPartner
                   ? filterOptions(searchTermPartner).map((item, index) => (
                       <option key={index} value={item}>
                         {item}
                       </option>
                     ))
-                  : selectOptions(partnerArray).map((item, index) => (
+                  : selectOptions(partnerArray2).map((item, index) => (
                       <option key={index} value={item}>
                         {item}
                       </option>
@@ -132,7 +169,7 @@ const StockPartner = ({
                     <input
                       id="selectedMatPartner"
                       type="text"
-                      value={tempValuePartner || 0}
+                      value={tempValuePartner}
                       onChange={(e) => handleInputChange(e.target.value)}
                     />{" "}
                     <button type="submit">Mettre à jour</button>
@@ -143,6 +180,12 @@ const StockPartner = ({
           ) : sourceName ? (
             <p>Chargement en cours...</p>
           ) : null}
+          {showMessage && (
+            <div className="showmessage">MAJ prise en compte</div>
+          )}
+          {showMessageAjout && (
+            <div className="showmessage">AJOUT pris en compte</div>
+          )}
         </h3>
       </div>
     </div>

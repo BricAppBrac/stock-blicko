@@ -9,11 +9,7 @@ const GenerateXlsx = ({
   partnerArray2,
   fileNameCible,
 }) => {
-  let totauxArrayChavril = null;
-  let totauxArrayOpel1 = null;
-  let totauxArrayOpel2 = null;
-  let totauxArrayJumpy = null;
-  let totauxArrayPartner = null;
+  let currArray = "";
 
   const enteteChavril = [
     "",
@@ -61,118 +57,219 @@ const GenerateXlsx = ({
     "Fournisseur",
   ];
 
-  const ligneVide = ["", "", "", "", "", ""];
-  let totalStockFinDeMoisRounded;
+  const ligneVide = ["", "", "", "", "", "", ""];
 
   const generateDoc = async () => {
     console.log("generateDoc");
-    const totaux = await handleCalculTotauxArray();
-    handleGenerateFinalArray(totaux);
+    handleGenerateFinalArray();
   };
 
-  const handleCalculTotauxArray = async () => {
-    console.log("handleCalculTotauxArray");
-
-    // Fonction pour calculer le total d'un tableau donné
-    const calculTotalParTableau = (tableau) => {
-      const total = tableau.reduce((acc, curr) => {
-        // Assurez-vous que curr[5] est un nombre. Si ce n'est pas un nombre ou indéfini, ajoutez 0.
-        const valeur = Number(curr[5]) || 0;
-        return acc + valeur;
-      }, 0);
-      // Arrondir le résultat sans décimales
-      return Math.round(total);
-    };
-
-    // Calculer les totaux pour chaque tableau
-    totauxArrayChavril = calculTotalParTableau(chavrilArray2);
-    totauxArrayOpel1 = calculTotalParTableau(opel1Array2);
-    totauxArrayOpel2 = calculTotalParTableau(opel2Array2);
-    totauxArrayJumpy = calculTotalParTableau(jumpyArray2);
-    totauxArrayPartner = calculTotalParTableau(partnerArray2);
-
-    // Calculer le totalStockFinDeMois
-    const totalStockFinDeMois = [
-      totauxArrayChavril,
+  const handleGenerateFinalArray = async () => {
+    console.log("handleGenerateFinalArray");
+    let totauxArrayChavril,
       totauxArrayOpel1,
       totauxArrayOpel2,
       totauxArrayJumpy,
       totauxArrayPartner,
-    ].reduce((acc, curr) => acc + curr, 0);
+      totalStockFinDeMois;
 
-    // Arrondir le totalStockFinDeMois sans décimales
-    totalStockFinDeMoisRounded = Math.round(totalStockFinDeMois);
+    // Mise à jour des lignes de total avec les résultats des formules
+    const ligneTotalChavril = ["", "", "", "", "", "", "Stock Bureau"];
+    const ligneTotalOpel1 = ["", "", "", "", "", "", "Stock Opel1"];
+    const ligneTotalOpel2 = ["", "", "", "", "", "", "Stock Opel2"];
+    const ligneTotalJumpy = ["", "", "", "", "", "", "Stock Jumpy"];
+    const ligneTotalPartner = ["", "", "", "", "", "", "Stock Partner"];
+    const ligneTotalFinDeMois = ["", "", "", "", "", "", "STOCK FIN DE MOIS"];
 
-    return {
-      totauxArrayChavril,
-      totauxArrayOpel1,
-      totauxArrayOpel2,
-      totauxArrayJumpy,
-      totauxArrayPartner,
-      totalStockFinDeMois: totalStockFinDeMoisRounded,
-    };
-  };
-
-  const handleGenerateFinalArray = async (totaux) => {
-    // Déconstruction pour obtenir les totaux
-    const {
-      totauxArrayChavril,
-      totauxArrayOpel1,
-      totauxArrayOpel2,
-      totauxArrayJumpy,
-      totauxArrayPartner,
-      totalStockFinDeMois,
-    } = totaux;
-
-    // Mise à jour des lignes de total avec les valeurs calculées
-    const totalChavril = [
-      "",
-      "",
-      "",
-      "",
-      "",
-      totauxArrayChavril,
-      "Stock Bureau",
-    ];
-    const totalOpel1 = ["", "", "", "", "", totauxArrayOpel1, "Stock Opel1"];
-    const totalOpel2 = ["", "", "", "", "", totauxArrayOpel2, "Stock Opel2"];
-    const totalJumpy = ["", "", "", "", "", totauxArrayJumpy, "Stock Jumpy"];
-    const totalPartner = [
-      "",
-      "",
-      "",
-      "",
-      "",
-      totauxArrayPartner,
-      "Stock Partner",
-    ];
-    const totalFinDeMois = [
-      "",
-      "",
-      "",
-      "",
-      "",
-      totalStockFinDeMois,
-      "STOCK FIN DE MOIS",
-    ];
-
-    // Construction du tableau final
+    // Initialisation du tableau final
     const finalArray = []
-      .concat([enteteChavril], chavrilArray2, [totalChavril], [ligneVide])
-      .concat([enteteOpel1], opel1Array2, [totalOpel1], [ligneVide])
-      .concat([enteteOpel2], opel2Array2, [totalOpel2], [ligneVide])
-      .concat([enteteJumpy], jumpyArray2, [totalJumpy], [ligneVide])
+      .concat([enteteChavril], chavrilArray2, [ligneTotalChavril], [ligneVide])
+      .concat([enteteOpel1], opel1Array2, [ligneTotalOpel1], [ligneVide])
+      .concat([enteteOpel2], opel2Array2, [ligneTotalOpel2], [ligneVide])
+      .concat([enteteJumpy], jumpyArray2, [ligneTotalJumpy], [ligneVide])
       .concat(
         [entetePartner],
         partnerArray2,
-        [totalPartner],
+        [ligneTotalPartner],
         [ligneVide],
-        [ligneVide]
-      )
-      .concat([totalFinDeMois]);
+        [ligneVide],
+        [ligneTotalFinDeMois]
+      );
+    // .concat([ligneTotalFinDeMois]);
 
-    console.log("finalArray");
-    console.log(finalArray);
+    // Ajout de la formule Excel dans la colonne "Montant €" (colonne 5) pour chaque ligne du tableau
+    console.log("Boucle de calcul des montants");
+    finalArray.forEach((row, rowIndex) => {
+      if (row[1] === "Chavril") {
+        console.log("Chavril");
+        currArray = "Chavril";
+      } else if (row[1] === "Opel1") {
+        console.log("Opel1");
+        currArray = "Opel1";
+      } else if (row[1] === "Opel2") {
+        console.log("Opel2");
+        currArray = "Opel2";
+      } else if (row[1] === "Jumpy") {
+        console.log("Jumpy");
+        currArray = "Jumpy";
+      } else if (row[1] === "Partner") {
+        console.log("Partner");
+        currArray = "Partner";
+      }
+
+      if (
+        rowIndex > 0 &&
+        rowIndex < finalArray.length - 1 &&
+        row[1] &&
+        row[5] !== "Montant €"
+      ) {
+        row[5] = {
+          f: `C${rowIndex + 1} * E${rowIndex + 1}`, // Formule Excel
+          t: "n", // Définir le type de cellule sur 'n' (nombre)
+          z: XLSX.SSF.get_table()[0], // Appliquer le format de nombre standard}; // Formule Excel
+        };
+      }
+      // ligneTotalChavril
+      if (currArray === "Chavril" && rowIndex === chavrilArray2.length + 2) {
+        console.log("calcul du total pour Chavril");
+        row[5] = {
+          f: `SUM(F2:F${rowIndex - 1})`, // Formule Excel pour la somme de la colonne "Montant €"
+          t: "n", // Définir le type de cellule sur 'n' (nombre)
+          z: XLSX.SSF.get_table()[0], // Appliquer le format de nombre standard
+        };
+        totauxArrayChavril = row[5];
+        ligneTotalChavril[5] = row[5];
+        console.log("totauxArrayChavril");
+        console.log(totauxArrayChavril);
+      }
+      // ligneTotalOpel1
+      if (
+        currArray === "Opel1" &&
+        rowIndex === chavrilArray2.length + opel1Array2.length + 5
+      ) {
+        console.log("calcul du total pour Opel1");
+        row[5] = {
+          f: `SUM(F${rowIndex - opel1Array2.length}:F${rowIndex - 1})`, // Formule Excel pour la somme de la colonne "Montant €"
+          t: "n", // Définir le type de cellule sur 'n' (nombre)
+          z: XLSX.SSF.get_table()[0], // Appliquer le format de nombre standard
+        };
+        totauxArrayOpel1 = row[5];
+        ligneTotalOpel1[5] = row[5];
+        console.log("totauxArrayOpel1");
+        console.log(totauxArrayOpel1);
+      }
+      // ligneTotalOpel2
+      if (
+        currArray === "Opel2" &&
+        rowIndex ===
+          chavrilArray2.length + opel1Array2.length + opel2Array2.length + 8
+      ) {
+        console.log("calcul du total pour Opel2");
+        row[5] = {
+          f: `SUM(F${rowIndex - opel2Array2.length}:F${rowIndex - 1})`, // Formule Excel pour la somme de la colonne "Montant €"
+          t: "n", // Définir le type de cellule sur 'n' (nombre)
+          z: XLSX.SSF.get_table()[0], // Appliquer le format de nombre standard
+        };
+        totauxArrayOpel2 = row[5];
+        ligneTotalOpel2[5] = row[5];
+        console.log("totauxArrayOpel2");
+        console.log(totauxArrayOpel2);
+      }
+      // ligneTotalJumpy
+      if (
+        currArray === "Jumpy" &&
+        rowIndex ===
+          chavrilArray2.length +
+            opel1Array2.length +
+            opel2Array2.length +
+            jumpyArray2.length +
+            11
+      ) {
+        console.log("calcul du total pour Jumpy");
+        row[5] = {
+          f: `SUM(F${rowIndex - jumpyArray2.length}:F${rowIndex - 1})`, // Formule Excel pour la somme de la colonne "Montant €"
+          t: "n", // Définir le type de cellule sur 'n' (nombre)
+          z: XLSX.SSF.get_table()[0], // Appliquer le format de nombre standard
+        };
+        totauxArrayJumpy = row[5];
+        ligneTotalJumpy[5] = row[5];
+        console.log("totauxArrayJumpy");
+        console.log(totauxArrayJumpy);
+      }
+      // ligneTotalPartner
+      if (
+        currArray === "Partner" &&
+        rowIndex ===
+          chavrilArray2.length +
+            opel1Array2.length +
+            opel2Array2.length +
+            jumpyArray2.length +
+            partnerArray2.length +
+            14
+      ) {
+        console.log("calcul du total pour Partner");
+        row[5] = {
+          f: `SUM(F${rowIndex - partnerArray2.length}:F${rowIndex - 1})`, // Formule Excel pour la somme de la colonne "Montant €"
+          t: "n", // Définir le type de cellule sur 'n' (nombre)
+          z: XLSX.SSF.get_table()[0], // Appliquer le format de nombre standard
+        };
+        totauxArrayPartner = row[5];
+        ligneTotalPartner[5] = row[5];
+        console.log("totauxArrayPartner");
+        console.log(totauxArrayPartner);
+      }
+      console.log("***********Avant traitement Fin de Mois");
+      // ligneTotalFinDeMois
+      if (rowIndex === finalArray.length - 1) {
+        console.log("calcul du Total Fin De Mois");
+        row[5] = {
+          f: `SUM(F${chavrilArray2.length + 2},F${
+            chavrilArray2.length + opel1Array2.length + 5
+          },F${
+            chavrilArray2.length + opel1Array2.length + opel2Array2.length + 8
+          },F${
+            chavrilArray2.length +
+            opel1Array2.length +
+            opel2Array2.length +
+            jumpyArray2.length +
+            11
+          },F${
+            chavrilArray2.length +
+            opel1Array2.length +
+            opel2Array2.length +
+            jumpyArray2.length +
+            partnerArray2.length +
+            14
+          })`, // Formule Excel pour la somme des totaux
+          t: "n", // Définir le type de cellule sur 'n' (nombre)
+          z: XLSX.SSF.get_table()[0], // Appliquer le format de nombre standard
+        };
+        totalStockFinDeMois = row[5];
+        ligneTotalFinDeMois[5] = row[5];
+        console.log("totalStockFinDeMois ");
+        console.log(totalStockFinDeMois);
+      }
+      ligneVide[5] = "";
+    });
+
+    // Construction du tableau final
+    const updatedFinalArray = []
+      .concat([enteteChavril], chavrilArray2, [ligneTotalChavril], [ligneVide])
+      .concat([enteteOpel1], opel1Array2, [ligneTotalOpel1], [ligneVide])
+      .concat([enteteOpel2], opel2Array2, [ligneTotalOpel2], [ligneVide])
+      .concat([enteteJumpy], jumpyArray2, [ligneTotalJumpy], [ligneVide])
+      .concat(
+        [entetePartner],
+        partnerArray2,
+        [ligneTotalPartner],
+        [ligneVide],
+        [ligneVide],
+        [ligneTotalFinDeMois]
+      );
+    // .concat([ligneTotalFinDeMois]);
+
+    console.log("updatedFinalArray");
+    console.log(updatedFinalArray);
 
     // Génération du fichier xlsx à partir de finalArray, portant le nom fileNameCible passé en props et le sauvegarder dans un répertoire choisi par l'utilisateur
 
@@ -182,7 +279,7 @@ const GenerateXlsx = ({
       : `${fileNameCible}.xlsx`;
 
     // Conversion de finalArray en feuille de calcul
-    const worksheet = XLSX.utils.aoa_to_sheet(finalArray);
+    const worksheet = XLSX.utils.aoa_to_sheet(updatedFinalArray);
 
     // Parcourir toutes les cellules du worksheet et ajuster le format pour les cellules numériques
     for (let cell in worksheet) {

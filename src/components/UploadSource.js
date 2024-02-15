@@ -66,7 +66,7 @@ const UploadSource = () => {
         opel2Array = [],
         jumpyArray = [],
         partnerArray = [];
-      // Dispatch en 4 tableaux selon lieu de stockage
+      // Dispatch en 5 tableaux selon lieu de stockage
       jsonData.forEach((row) => {
         if (!row || row.length === 0) return; // Ignorer les lignes vides
         const secondColumnValue = row[1];
